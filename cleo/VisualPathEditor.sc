@@ -23,10 +23,10 @@ GET_LAST_CREATED_CUSTOM_SCRIPT visualScript
 STREAM_CUSTOM_SCRIPT_FROM_LABEL manipulationEditor 0
 GET_LAST_CREATED_CUSTOM_SCRIPT manipulationScript
 
-SET_THREAD_VAR visualScript 11 number //Pointer pra ca
-SET_THREAD_VAR visualScript 9 manipulationScript //Pointer pro Manipulator
-SET_THREAD_VAR manipulationScript 27 visualscript
-SET_THREAD_VAR manipulationScript 5 number
+SET_SCRIPT_VAR visualScript 11 number //Pointer pra ca
+SET_SCRIPT_VAR visualScript 9 manipulationScript //Pointer pro Manipulator
+SET_SCRIPT_VAR manipulationScript 27 visualscript
+SET_SCRIPT_VAR manipulationScript 5 number
 
 GET_LABEL_POINTER modelIds temporary
 
@@ -61,6 +61,7 @@ main:
 
     IF loaded = TRUE
         IF IS_KEY_JUST_PRESSED VK_KEY_O
+        OR IS_ANY_FIRE_BUTTON_PRESSED PAD1
             SET_LOCAL_VAR_BIT_LVAR modified curfile
             GOSUB getClosestObject
         ENDIF
@@ -91,7 +92,7 @@ main:
                     CLEO_CALL getRegion 0 (x, y) (region)
                     GOSUB loadRegions
                     loaded = TRUE
-                    SET_THREAD_VAR manipulationScript 21 loaded
+                    SET_SCRIPT_VAR manipulationScript 21 loaded
                 ENDIF
             BREAK
             CASE 3  //Unload (sem salvar)
@@ -117,7 +118,7 @@ main:
                     CLEO_CALL removeCurrentNode 0 (object, curfile, selecttype, loadedregions)
 
                     //Já que removemos uma node, obrigatoriamente temos que atualizar todas as nodes ao redor
-                    GET_THREAD_VAR manipulationScript 6 (temporary)
+                    GET_SCRIPT_VAR manipulationScript 6 (temporary)
                     REPEAT 9 count
                         //A var do manipulador dita quais areas estão carregadas, sem isso o jogo tentara carregar áreas que não existem
                         IF IS_LOCAL_VAR_BIT_SET_LVAR temporary count
@@ -128,11 +129,11 @@ main:
                     DELETE_OBJECT curobject
                     curobject = -1
 
-                    SET_THREAD_VAR visualScript 3 (0) //Diz q não tem object
-                    SET_THREAD_VAR visualScript 13 (0) //Diz q não tem curobject
-                    SET_THREAD_VAR manipulationScript 14 (0)
-                    SET_THREAD_VAR manipulationScript 22 (0) //NaviArea
-                    SET_THREAD_VAR manipulationScript 23 (0) //NaviNode
+                    SET_SCRIPT_VAR visualScript 3 (0) //Diz q não tem object
+                    SET_SCRIPT_VAR visualScript 13 (0) //Diz q não tem curobject
+                    SET_SCRIPT_VAR manipulationScript 14 (0)
+                    SET_SCRIPT_VAR manipulationScript 22 (0) //NaviArea
+                    SET_SCRIPT_VAR manipulationScript 23 (0) //NaviNode
                     GOSUB updateCounts
                 ENDIF
             BREAK
@@ -164,8 +165,8 @@ GOTO main
         GET_CHAR_COORDINATES scplayer x y z
         CLEO_CALL getRegion 0 (x, y) region
 
-        SET_THREAD_VAR visualScript 0 region //Region
-        SET_THREAD_VAR manipulationScript 6 0
+        SET_SCRIPT_VAR visualScript 0 region //Region
+        SET_SCRIPT_VAR manipulationScript 6 0
         number = region
         
         temporary = 0
@@ -221,13 +222,13 @@ GOTO main
         SET_LOCAL_VAR_BIT_LVAR temporary iy
         ENDIF
 
-        SET_THREAD_VAR manipulationScript 6 temporary
-        SET_THREAD_VAR manipulationScript 15 (loadedregions)
+        SET_SCRIPT_VAR manipulationScript 6 temporary
+        SET_SCRIPT_VAR manipulationScript 15 (loadedregions)
     RETURN
 
     loadRegions:
-        GET_THREAD_VAR manipulationScript 6 curregion
-        SET_THREAD_VAR manipulationScript 7 1 //Loading
+        GET_SCRIPT_VAR manipulationScript 6 curregion
+        SET_SCRIPT_VAR manipulationScript 7 1 //Loading
         WAIT 100
 
         RESET_LIST loadedregions
@@ -339,8 +340,8 @@ GOTO main
         GOSUB createLinks
         LIST_ADD loadedregions region
 
-        SET_THREAD_VAR manipulationScript 7 0 //Loading
-        SET_THREAD_VAR manipulationScript 8 region //EditingRegion
+        SET_SCRIPT_VAR manipulationScript 7 0 //Loading
+        SET_SCRIPT_VAR manipulationScript 8 region //EditingRegion
     RETURN
 
     loadFile:
@@ -385,7 +386,7 @@ GOTO main
         ENDREPEAT
 
         loaded = FALSE
-        SET_THREAD_VAR manipulationScript 21 loaded
+        SET_SCRIPT_VAR manipulationScript 21 loaded
     RETURN
 
     updateCounts:
@@ -408,7 +409,7 @@ GOTO main
             ENDIF
         ENDREPEAT
         GOSUB updateCounts
-        SET_THREAD_VAR manipulationScript 8 region
+        SET_SCRIPT_VAR manipulationScript 8 region
     RETURN
 
     createObjects:
@@ -675,7 +676,7 @@ GOTO main
 
     deleteObjects:
         GET_LABEL_POINTER lists temporary //ObjectList
-        SET_THREAD_VAR manipulationScript 7 1 //Loading
+        SET_SCRIPT_VAR manipulationScript 7 1 //Loading
         WAIT 100
 
         REPEAT 9 ix
@@ -693,8 +694,8 @@ GOTO main
                     count += 1
                 ENDWHILE
 
-                SET_THREAD_VAR visualScript 8 (0) //Diz q não tem object
-                SET_THREAD_VAR manipulationScript 14 (0)
+                SET_SCRIPT_VAR visualScript 8 (0) //Diz q não tem object
+                SET_SCRIPT_VAR manipulationScript 14 (0)
 
                 IF DOES_OBJECT_EXIST curobject
                     DELETE_OBJECT curobject
@@ -716,7 +717,7 @@ GOTO main
         READ_MEMORY iy 4 0 (temporary) //Interregion List
         DELETE_LIST temporary
 
-        SET_THREAD_VAR manipulationScript 7 0 //Loading
+        SET_SCRIPT_VAR manipulationScript 7 0 //Loading
     RETURN
 
     getClosestObject:
@@ -742,8 +743,8 @@ GOTO main
                         selecttype = 1
                     ENDIF
 
-                    SET_THREAD_VAR manipulationScript 26 selecttype
-                    SET_THREAD_VAR visualScript 10 selecttype //SelectType
+                    SET_SCRIPT_VAR manipulationScript 26 selecttype
+                    SET_SCRIPT_VAR visualScript 10 selecttype //SelectType
 
                     GET_OBJECT_COORDINATES curobject x y z
 
@@ -758,57 +759,57 @@ GOTO main
 
                     INIT_EXTENDED_OBJECT_VARS curobject VPEV 1
                     SET_EXTENDED_OBJECT_VAR curobject VPEV 1 object
-                    SET_THREAD_VAR visualScript 3 (object) //Manda o object inteiro mesmo e foda-se
+                    SET_SCRIPT_VAR visualScript 3 (object) //Manda o object inteiro mesmo e foda-se
 
                     //Manda o object e curobject pro script de manipulação
-                    SET_THREAD_VAR manipulationScript 14 (object)  
-                    SET_THREAD_VAR manipulationScript 21 (curobject)
-                    SET_THREAD_VAR visualScript 13 (curobject) //Manda o curobject
+                    SET_SCRIPT_VAR manipulationScript 14 (object)  
+                    SET_SCRIPT_VAR manipulationScript 21 (curobject)
+                    SET_SCRIPT_VAR visualScript 13 (curobject) //Manda o curobject
 
                     IF selecttype = 1
                         //Selecionando Nodes
                         GET_EXTENDED_OBJECT_VAR object VPEV 6 (temporary)
-                        SET_THREAD_VAR visualScript 1 (temporary) //manda as flags pro outro script visual
+                        SET_SCRIPT_VAR visualScript 1 (temporary) //manda as flags pro outro script visual
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 8 (temporary)
-                        SET_THREAD_VAR visualScript 4 (temporary) //Links
-                        SET_THREAD_VAR manipulationScript 9 (temporary)
+                        SET_SCRIPT_VAR visualScript 4 (temporary) //Links
+                        SET_SCRIPT_VAR manipulationScript 9 (temporary)
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 9 (temporary)
-                        SET_THREAD_VAR visualScript 5 (temporary) //a list com as Areas dos Links
+                        SET_SCRIPT_VAR visualScript 5 (temporary) //a list com as Areas dos Links
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 10 (temporary)
-                        SET_THREAD_VAR visualScript 6 (temporary) //a list com as Nodes dos Links
+                        SET_SCRIPT_VAR visualScript 6 (temporary) //a list com as Nodes dos Links
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 11 (temporary)
-                        SET_THREAD_VAR visualScript 7 (temporary) //a list com as Navis dos Links
+                        SET_SCRIPT_VAR visualScript 7 (temporary) //a list com as Navis dos Links
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 12 (temporary)
-                        SET_THREAD_VAR visualScript 8 (temporary) //a list com as Lenghts dos Links
+                        SET_SCRIPT_VAR visualScript 8 (temporary) //a list com as Lenghts dos Links
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 3 (temporary)
                         IF temporary >= vehNodeCount
-                            SET_THREAD_VAR visualScript 2 (0) //seta IsVehicle pra 0
+                            SET_SCRIPT_VAR visualScript 2 (0) //seta IsVehicle pra 0
                         ELSE
-                            SET_THREAD_VAR visualScript 2 (1) //é veículo, então seta IsVehicle pra 1
+                            SET_SCRIPT_VAR visualScript 2 (1) //é veículo, então seta IsVehicle pra 1
                         ENDIF
 
                         //Ativa a visualização do seu NaviNode
                         GET_EXTENDED_OBJECT_VAR object VPEV 7 (temporary)
-                        SET_THREAD_VAR manipulationScript 22 (temporary)
+                        SET_SCRIPT_VAR manipulationScript 22 (temporary)
                     ELSE
                         //Selecionando Navis
                         GET_EXTENDED_OBJECT_VAR object VPEV 1 (temporary)
-                        SET_THREAD_VAR visualScript 4 (temporary) //AreaID
+                        SET_SCRIPT_VAR visualScript 4 (temporary) //AreaID
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 2 (temporary)
-                        SET_THREAD_VAR visualScript 5 (temporary) //NodeID
+                        SET_SCRIPT_VAR visualScript 5 (temporary) //NodeID
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 5 (temporary)
-                        SET_THREAD_VAR visualScript 1 (temporary) //Flags dos Navis
+                        SET_SCRIPT_VAR visualScript 1 (temporary) //Flags dos Navis
 
                         GET_EXTENDED_OBJECT_VAR object VPEV 6 (temporary)
-                        SET_THREAD_VAR visualScript 6 (temporary) //Pathwidth
+                        SET_SCRIPT_VAR visualScript 6 (temporary) //Pathwidth
                     ENDIF
 
                     SET_OBJECT_SCALE curobject 1.2
@@ -822,11 +823,11 @@ GOTO main
         ENDWHILE
 
         IF NOT DOES_OBJECT_EXIST curobject
-            SET_THREAD_VAR visualScript 3 (0) //Diz q não tem object
-            SET_THREAD_VAR visualScript 13 (0) //Diz q não tem curobject
-            SET_THREAD_VAR manipulationScript 14 (0)
-            SET_THREAD_VAR manipulationScript 22 (0) //NaviArea
-            SET_THREAD_VAR manipulationScript 23 (0) //NaviNode
+            SET_SCRIPT_VAR visualScript 3 (0) //Diz q não tem object
+            SET_SCRIPT_VAR visualScript 13 (0) //Diz q não tem curobject
+            SET_SCRIPT_VAR manipulationScript 14 (0)
+            SET_SCRIPT_VAR manipulationScript 22 (0) //NaviArea
+            SET_SCRIPT_VAR manipulationScript 23 (0) //NaviNode
         ENDIF
     RETURN
 
@@ -847,7 +848,7 @@ GOTO main
                         selecttype = 1
                     ENDIF
 
-                    GET_THREAD_VAR visualScript 20 (offset)
+                    GET_SCRIPT_VAR visualScript 20 (offset)
                     offset -= 1
 
                     IF selecttype = 1
@@ -919,8 +920,8 @@ GOTO main
     RETURN
 
     saveRegions:
-        GET_THREAD_VAR manipulationScript 6 curregion
-        SET_THREAD_VAR manipulationScript 7 1 //Loading
+        GET_SCRIPT_VAR manipulationScript 6 curregion
+        SET_SCRIPT_VAR manipulationScript 7 1 //Loading
         WAIT 1
 
         curfile = 0
@@ -983,8 +984,8 @@ GOTO main
         GOSUB writeFile
         RESET_LIST loadedregions
 
-        SET_THREAD_VAR manipulationScript 7 0 //Loading
-        SET_THREAD_VAR manipulationScript 8 region //EditingRegion
+        SET_SCRIPT_VAR manipulationScript 7 0 //Loading
+        SET_SCRIPT_VAR manipulationScript 8 region //EditingRegion
     RETURN
 
     desselect:
@@ -993,11 +994,11 @@ GOTO main
             curobject = -1
         ENDIF
         
-        SET_THREAD_VAR visualScript 3 (0) //Diz q não tem object
-        SET_THREAD_VAR visualScript 13 (0) //Diz q não tem curobject
-        SET_THREAD_VAR manipulationScript 14 (0)
-        SET_THREAD_VAR manipulationScript 22 (0) //NaviArea
-        SET_THREAD_VAR manipulationScript 23 (0) //NaviNode
+        SET_SCRIPT_VAR visualScript 3 (0) //Diz q não tem object
+        SET_SCRIPT_VAR visualScript 13 (0) //Diz q não tem curobject
+        SET_SCRIPT_VAR manipulationScript 14 (0)
+        SET_SCRIPT_VAR manipulationScript 22 (0) //NaviArea
+        SET_SCRIPT_VAR manipulationScript 23 (0) //NaviNode
     RETURN
 
     writeFile:
@@ -1130,7 +1131,7 @@ GOTO main
                     GET_LABEL_POINTER functionz temporary
                     WRITE_MEMORY temporary 4 (0) 0
 
-                    SET_THREAD_VAR manipulationScript 7 0 //Loading
+                    SET_SCRIPT_VAR manipulationScript 7 0 //Loading
                     GOTO main
                 ENDIF
 
@@ -1202,7 +1203,7 @@ GOTO main
                         GET_LABEL_POINTER functionz temporary
                         WRITE_MEMORY temporary 4 (0) 0
 
-                        SET_THREAD_VAR manipulationScript 7 0 //Loading
+                        SET_SCRIPT_VAR manipulationScript 7 0 //Loading
                         GOTO main
                     ENDIF
 
@@ -1286,14 +1287,14 @@ SCRIPT_END
         WAIT 0
 
         //Se o mod não estiver ativo nem roda o resto do código pra evitar crashs
-        GET_THREAD_VAR manipulationScript 21 value
+        GET_SCRIPT_VAR manipulationScript 21 value
         IF value = FALSE
             GOTO menu
         ENDIF
 
         USE_TEXT_COMMANDS 1
 
-        SET_THREAD_VAR manipulationScript 16 tab //Manda a tab pro Manipulador
+        SET_SCRIPT_VAR manipulationScript 16 tab //Manda a tab pro Manipulador
 
         DRAW_STRING "LINKS" DRAW_EVENT_AFTER_DRAWING 91.0 6.0 0.45 0.85 TRUE FONT_MENU
 
@@ -1316,15 +1317,19 @@ SCRIPT_END
         ENDIF
 
         IF selected = 0
-            GET_THREAD_VAR manipulationScript 28 value
+            GET_SCRIPT_VAR manipulationScript 28 value
             IF IS_KEY_JUST_PRESSED VK_KEY_J
-            AND value = 0
+            OR IS_MOUSE_WHEEL_DOWN
+                IF value = 0
                 tab = 1
+                ENDIF
             ENDIF
 
             IF IS_KEY_JUST_PRESSED VK_KEY_L
-            AND value = 0
+            OR IS_MOUSE_WHEEL_UP
+                IF value = 0
                 tab = 2
+                ENDIF
             ENDIF
 
             IF tab = 1
@@ -1444,7 +1449,7 @@ SCRIPT_END
                     DRAW_RECT 75.0 242.0 145.9 50.35 128 24 24 128
                 ENDIF
 
-                GET_THREAD_VAR manipulationScript 28 value
+                GET_SCRIPT_VAR manipulationScript 28 value
                 IF value = 0
                     //Controles
                     IF IS_KEY_JUST_PRESSED VK_KEY_I
@@ -1467,6 +1472,7 @@ SCRIPT_END
                     ENDIF
 
                     IF IS_KEY_JUST_PRESSED VK_KEY_L
+                    OR IS_MOUSE_WHEEL_UP
                         SWITCH selected
                             CASE 1
                                 //LeftLanes
@@ -1520,6 +1526,7 @@ SCRIPT_END
                     ENDIF
 
                     IF IS_KEY_JUST_PRESSED VK_KEY_J
+                    OR IS_MOUSE_WHEEL_DOWN
                         SWITCH selected
                             CASE 1
                                 //LeftLanes
@@ -1701,7 +1708,7 @@ SCRIPT_END
                 ENDIF
             ENDIF
 
-            GET_THREAD_VAR manipulationScript 28 value
+            GET_SCRIPT_VAR manipulationScript 28 value
             IF value = 0
                 IF IS_KEY_JUST_PRESSED VK_KEY_I
                     selected -= 1
@@ -1728,178 +1735,189 @@ SCRIPT_END
                 ENDIF
 
                 IF IS_KEY_JUST_PRESSED VK_KEY_L
-                AND DOES_OBJECT_EXIST object
-                    IF selected = 4
-                        math = 13 //Highway
-                        SET_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-                    IF selected = 5
-                        math = 21 //Parking
-                        SET_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-                    IF selected = 7
-                        math = 8  //Emergency
-                        SET_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-
-                    //Floodfill
-                    IF selected = 8
-                        GET_EXTENDED_OBJECT_VAR object VPEV 5 value
-                        value += 1
-                        IF value <= 255
-                            SET_EXTENDED_OBJECT_VAR object VPEV 5 value
+                OR IS_MOUSE_WHEEL_UP
+                    IF DOES_OBJECT_EXIST object
+                        IF selected = 4
+                            math = 13 //Highway
+                            SET_LOCAL_VAR_BIT_LVAR flags math
                         ENDIF
-                    ENDIF
-
-                    //Path Width
-                    IF selected = 1
-                        GET_EXTENDED_OBJECT_VAR object VPEV 4 value
-                        value += 1
-                        SET_EXTENDED_OBJECT_VAR object VPEV 4 value
-                    ENDIF
-                    
-                    //Traffic Level
-                    IF selected = 3
-                        math = 4
-                        IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                            math = 5
-                            IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                                math = 4
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-                            ELSE
-                                math = 4
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                            ENDIF
-                        ELSE
-                            math = 5
-                            IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                                math = 4
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                            ENDIF
+                        IF selected = 5
+                            math = 21 //Parking
+                            SET_LOCAL_VAR_BIT_LVAR flags math
                         ENDIF
-                    ENDIF
+                        IF selected = 7
+                            math = 8  //Emergency
+                            SET_LOCAL_VAR_BIT_LVAR flags math
+                        ENDIF
 
-                    //Spawn Chance
-                    IF selected = 6
-                        CLEO_CALL getValueFromFlag 0 (flags, 16, 4) (value)
-                        IF value < 15
+                        //Floodfill
+                        IF selected = 8
+                            GET_EXTENDED_OBJECT_VAR object VPEV 5 value
                             value += 1
-                            CLEO_CALL setFlagFromValue 0 (flags, 16, 4, value) (flags)
-                        ENDIF
-                    ENDIF
-
-                    //Boat
-                    IF selected = 2
-                    AND isvehicle = 1
-                        math = 7
-                        SET_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-
-                    //Change Coordinates
-                    IF selected = 9
-                        GET_CHAR_COORDINATES scplayer x y z
-
-                        GET_GROUND_Z_FOR_3D_COORD x y z z
-                        GET_WATER_HEIGHT_AT_COORDS x y TRUE fvalue
-
-                        IF fvalue > z
-                            z = fvalue
+                            IF IS_CHAR_DUCKING scplayer
+                                value += 9
+                            ENDIF
+                            IF value <= 255
+                                SET_EXTENDED_OBJECT_VAR object VPEV 5 value
+                            ENDIF
                         ENDIF
 
-                        SET_OBJECT_COORDINATES object x y z
-                        SET_OBJECT_COORDINATES curobject x y z
-                    ENDIF
+                        //Path Width
+                        IF selected = 1
+                            GET_EXTENDED_OBJECT_VAR object VPEV 4 value
+                            value += 1
+                            SET_EXTENDED_OBJECT_VAR object VPEV 4 value
+                        ENDIF
 
-                    SET_EXTENDED_OBJECT_VAR object VPEV 6 (flags)
+                        //Traffic Level
+                        IF selected = 3
+                            math = 4
+                            IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                math = 5
+                                IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                    math = 4
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+
+                                    math = 5
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+                                ELSE
+                                    math = 4
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+
+                                    math = 5
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                                ENDIF
+                            ELSE
+                                math = 5
+                                IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                    math = 4
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+
+                                    math = 5
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                                ENDIF
+                            ENDIF
+                        ENDIF
+
+                        //Spawn Chance
+                        IF selected = 6
+                            CLEO_CALL getValueFromFlag 0 (flags, 16, 4) (value)
+                            IF value < 15
+                                value += 1
+                                CLEO_CALL setFlagFromValue 0 (flags, 16, 4, value) (flags)
+                            ENDIF
+                        ENDIF
+
+                        //Boat
+                        IF selected = 2
+                        AND isvehicle = 1
+                            math = 7
+                            SET_LOCAL_VAR_BIT_LVAR flags math
+                        ENDIF
+
+                        //Change Coordinates
+                        IF selected = 9
+                            GET_CHAR_COORDINATES scplayer x y z
+
+                            GET_GROUND_Z_FOR_3D_COORD x y z z
+                            GET_WATER_HEIGHT_AT_COORDS x y TRUE fvalue
+
+                            IF fvalue > z
+                                z = fvalue
+                            ENDIF
+
+                            SET_OBJECT_COORDINATES object x y z
+                            SET_OBJECT_COORDINATES curobject x y z
+                        ENDIF
+
+                        SET_EXTENDED_OBJECT_VAR object VPEV 6 (flags)
+                    ENDIF
                 ENDIF
 
                 IF IS_KEY_JUST_PRESSED VK_KEY_J
-                AND DOES_OBJECT_EXIST object
-                    IF selected = 4
-                        math = 13 //Highway
-                        CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-                    IF selected = 5
-                        math = 21 //Parking
-                        CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-                    IF selected = 7
-                        math = 8  //Emergency
-                        CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
-
-                    //Floodfill
-                    GET_EXTENDED_OBJECT_VAR object VPEV 5 value
-                    IF selected = 8
-                    AND value > 0
-                        value -= 1
-                        SET_EXTENDED_OBJECT_VAR object VPEV 5 value
-                    ENDIF
-
-                    //Path Width
-                    GET_EXTENDED_OBJECT_VAR object VPEV 4 value
-                    IF selected = 1
-                    AND value > 0
-                        value -= 1
-                        SET_EXTENDED_OBJECT_VAR object VPEV 4 value
-                    ENDIF
-
-                    //Traffic Level
-                    IF selected = 3
-                        math = 4
-                        IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                            math = 5
-                            IF NOT IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                                math = 4
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-                            ENDIF
-                        ELSE
-                            math = 5
-                            IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
-                                math = 4
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-                            ELSE
-                                math = 4
-                                SET_LOCAL_VAR_BIT_LVAR flags math
-
-                                math = 5
-                                CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                            ENDIF
+                OR IS_MOUSE_WHEEL_DOWN
+                    IF DOES_OBJECT_EXIST object
+                        IF selected = 4
+                            math = 13 //Highway
+                            CLEAR_LOCAL_VAR_BIT_LVAR flags math
                         ENDIF
-                    ENDIF
+                        IF selected = 5
+                            math = 21 //Parking
+                            CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                        ENDIF
+                        IF selected = 7
+                            math = 8  //Emergency
+                            CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                        ENDIF
 
-                    //Spawn Chance
-                    IF selected = 6
-                        CLEO_CALL getValueFromFlag 0 (flags, 16, 4) (value)
-                        IF value > 0
+                        //Floodfill
+                        GET_EXTENDED_OBJECT_VAR object VPEV 5 value
+                        IF selected = 8
+                        AND value > 0
                             value -= 1
-                            CLEO_CALL setFlagFromValue 0 (flags, 16, 4, value) (flags)
+                            IF IS_CHAR_DUCKING scplayer
+                            AND value > 10
+                            value -= 9
+                            ENDIF
+                            SET_EXTENDED_OBJECT_VAR object VPEV 5 value
                         ENDIF
-                    ENDIF
 
-                    //Boat
-                    IF selected = 2
-                    AND isvehicle = 1
-                        math = 7
-                        CLEAR_LOCAL_VAR_BIT_LVAR flags math
-                    ENDIF
+                        //Path Width
+                        GET_EXTENDED_OBJECT_VAR object VPEV 4 value
+                        IF selected = 1
+                        AND value > 0
+                            value -= 1
+                            SET_EXTENDED_OBJECT_VAR object VPEV 4 value
+                        ENDIF
 
-                    SET_EXTENDED_OBJECT_VAR object VPEV 6 (flags)
+                        //Traffic Level
+                        IF selected = 3
+                            math = 4
+                            IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                math = 5
+                                IF NOT IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                    math = 4
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+    
+                                    math = 5
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+                                ENDIF
+                            ELSE
+                                math = 5
+                                IF IS_LOCAL_VAR_BIT_SET_LVAR flags math
+                                    math = 4
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+
+                                    math = 5
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+                                ELSE
+                                    math = 4
+                                    SET_LOCAL_VAR_BIT_LVAR flags math
+
+                                    math = 5
+                                    CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                                ENDIF
+                            ENDIF
+                        ENDIF
+
+                        //Spawn Chance
+                        IF selected = 6
+                            CLEO_CALL getValueFromFlag 0 (flags, 16, 4) (value)
+                            IF value > 0
+                                value -= 1
+                                CLEO_CALL setFlagFromValue 0 (flags, 16, 4, value) (flags)
+                            ENDIF
+                        ENDIF
+
+                        //Boat
+                        IF selected = 2
+                        AND isvehicle = 1
+                            math = 7
+                            CLEAR_LOCAL_VAR_BIT_LVAR flags math
+                        ENDIF
+
+                     SET_EXTENDED_OBJECT_VAR object VPEV 6 (flags)
+                     ENDIF
                 ENDIF
 
                 IF DOES_OBJECT_EXIST object
@@ -1978,7 +1996,7 @@ SCRIPT_END
             STRING_FORMAT txt "%i-%i" value value2
             DRAW_STRING $txt DRAW_EVENT_AFTER_DRAWING 85.0 42.0 0.3 0.65 TRUE FONT_MENU
 
-            GET_THREAD_VAR manipulationScript 28 value
+            GET_SCRIPT_VAR manipulationScript 28 value
             IF value = 0
                 IF IS_KEY_JUST_PRESSED VK_KEY_I
                     selected -= 1
@@ -2007,8 +2025,8 @@ SCRIPT_END
                 //Manda a info da node selecionado pro Manipulador
                 selected -= 1
                 IF count = selected
-                    SET_THREAD_VAR manipulationScript 19 value
-                    SET_THREAD_VAR manipulationScript 20 value2
+                    SET_SCRIPT_VAR manipulationScript 19 value
+                    SET_SCRIPT_VAR manipulationScript 20 value2
                 ENDIF
                 selected += 1
 
@@ -2044,8 +2062,8 @@ SCRIPT_END
                 //Manda a info da navi do node selecionado pro Manipulador
                 selected -= 1
                 IF count = selected
-                    SET_THREAD_VAR manipulationScript 22 value
-                    SET_THREAD_VAR manipulationScript 23 math
+                    SET_SCRIPT_VAR manipulationScript 22 value
+                    SET_SCRIPT_VAR manipulationScript 23 math
                 ENDIF
                 selected += 1
 
@@ -2131,6 +2149,7 @@ SCRIPT_END
                     ENDIF
 
                     IF IS_KEY_JUST_PRESSED VK_KEY_P
+                    OR IS_AIM_BUTTON_PRESSED PAD1
                         GET_LABEL_POINTER functionz count
                         WRITE_MEMORY count 4 (7) 0
                     ENDIF
@@ -2167,7 +2186,7 @@ SCRIPT_END
                     ENDIF
                 ELSE
                     //Tab 2
-                    GET_THREAD_VAR visualScript 20 count
+                    GET_SCRIPT_VAR visualScript 20 count
                     IF NOT count = 0
                         //Node do Link
                         CLEO_CALL getNodebyID 0 (loadedregions, areaid, nodeid) (node)
@@ -2207,9 +2226,9 @@ SCRIPT_END
 
                             links -= 1
                             SET_EXTENDED_OBJECT_VAR object VPEV 8 links
-                            SET_THREAD_VAR visualScript 4 links
+                            SET_SCRIPT_VAR visualScript 4 links
 
-                            GET_THREAD_VAR mainscript 4 (as)
+                            GET_SCRIPT_VAR mainscript 4 (as)
                             CLEO_CALL getListPointer 0 (3 as) (as)
                             READ_STRUCT_OFFSET as 16 4 (ns)
                             ns -= 1
@@ -2259,7 +2278,7 @@ SCRIPT_END
                                     count -= 1
 
                                     count += 2
-                                    SET_THREAD_VAR visualScript 20 count
+                                    SET_SCRIPT_VAR visualScript 20 count
 
                                     links += 1
                                     GOTO fimfds
@@ -2281,7 +2300,7 @@ SCRIPT_END
                                     count += 1
 
                                     count -= 0
-                                    SET_THREAD_VAR visualScript 20 count
+                                    SET_SCRIPT_VAR visualScript 20 count
                                 ENDIF
                             ENDIF
                             count += 1
@@ -2289,6 +2308,7 @@ SCRIPT_END
 
                         //Atualizar Link
                         IF IS_KEY_JUST_PRESSED VK_KEY_P
+                        OR IS_AIM_BUTTON_PRESSED PAD1
                             GET_LABEL_POINTER functionz count
                             WRITE_MEMORY count 4 (4) 0
                         ENDIF
@@ -2358,7 +2378,7 @@ SCRIPT_END
 
                         IF links < 16
                             links += 1
-                            SET_THREAD_VAR visualScript 4 links
+                            SET_SCRIPT_VAR visualScript 4 links
                             SET_EXTENDED_OBJECT_VAR object VPEV 8 links
 
                             GET_EXTENDED_OBJECT_VAR object VPEV 9 (as) //AreaID
@@ -2373,7 +2393,7 @@ SCRIPT_END
                             GET_EXTENDED_OBJECT_VAR object VPEV 12 (as) //Length
                             LIST_ADD as 0
 
-                            GET_THREAD_VAR mainscript 4 (as)
+                            GET_SCRIPT_VAR mainscript 4 (as)
                             CLEO_CALL getListPointer 0 (3 as) (as)
                             READ_STRUCT_OFFSET as 16 4 (ns)
                             ns += 1
@@ -2420,6 +2440,7 @@ SCRIPT_END
         ENDSWITCH
 
         IF IS_KEY_JUST_PRESSED VK_KEY_L
+        OR IS_MOUSE_WHEEL_UP
             GET_LABEL_POINTER functionz count
             SWITCH selected
                 CASE 0
@@ -2467,6 +2488,7 @@ SCRIPT_END
         ENDSWITCH
 
         IF IS_KEY_JUST_PRESSED VK_KEY_L
+        OR IS_MOUSE_WHEEL_UP
             GET_LABEL_POINTER functionz count
             SWITCH selected
                 CASE 0
